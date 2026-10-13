@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FiArrowLeft, FiCheck, FiDownload, FiEye, FiPlus, FiSave, FiSend, FiShield, FiTrash2 } from "react-icons/fi";
 import { catalogSeed, formatMoney, getQuoteTotals, makeQuoteItem } from "../../data/quotes";
@@ -8,14 +8,12 @@ import styles from "./styles.module.css";
 
 const QuoteBuilderPage = ({ quotes, catalog, updateQuote, notify }) => {
   const { quoteId } = useParams();
-  const navigate = useNavigate();
   const quoteFromList = quotes.find((item) => item.id === quoteId);
   const [draft, setDraft] = useState(quoteFromList || null);
   const [removeItem, setRemoveItem] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [saved, setSaved] = useState(true);
 
-  useEffect(() => { setDraft(quoteFromList || null); setSaved(true); }, [quoteFromList]);
   const products = catalog.length ? catalog : catalogSeed;
   const totals = useMemo(() => draft ? getQuoteTotals(draft) : null, [draft]);
   if (!draft) return <div className={styles.missing}><h1>Quote not found</h1><p>This quote may have been removed from the current session.</p><Link to="/quotes">Back to quotes</Link></div>;
@@ -110,4 +108,7 @@ const QuoteBuilderPage = ({ quotes, catalog, updateQuote, notify }) => {
   );
 };
 export default QuoteBuilderPage;
+
+
+
 
