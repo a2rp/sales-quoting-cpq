@@ -12,14 +12,14 @@
 .active,.navLink:hover { color: #fff; }
 .newQuote { display: flex; align-items: center; gap: .4rem; min-height: 2.65rem; padding: 0 .95rem; border: 1px solid var(--color-sand); border-radius: 7px; color: var(--color-ink); background: var(--color-sand); font-size: .9rem; font-weight: 750; transition: box-shadow .18s,border-color .18s; }
 .newQuote:hover { border-color: #fff; box-shadow: 0 0 0 3px #f4d7bd27; }
-.workspace { display: flex; align-items: center; gap: .5rem; color: #bbbcc2; font-size: .8rem; font-weight: 700; letter-spacing: .08em; }
+.workspace { display: flex; align-items: center; gap: .5rem; color: #bbbcc2; font-size: .8125rem; font-weight: 700; letter-spacing: .08em; }
 .workspace i { width: 7px; height: 7px; border-radius: 50%; background: #75c08d; }
 .menu { display: none; width: 2.6rem; height: 2.6rem; place-items: center; border: 1px solid #ffffff4a; border-radius: 7px; color: #fff; background: transparent; }
 @media(max-width: 900px) { .bar { gap: 1.3rem; padding-inline: 1.2rem; } .nav { gap: 1.2rem; } }
 @media(max-width: 700px) {
   .bar { min-height: 68px; justify-content: space-between; }
   .menu { display: grid; }
-  .workspace { margin-left: auto; font-size: .75rem; }
+  .workspace { margin-left: auto; font-size: .8125rem; }
   .navWrap { position: absolute; top: 68px; right: 0; left: 0; display: none; align-items: stretch; padding: 1rem 1.2rem; border-top: 1px solid #ffffff28; background: var(--color-ink); }
   .open { display: flex; flex-direction: column; }
   .nav { align-items: stretch; flex-direction: column; gap: 0; }
@@ -28,3 +28,4 @@
   .newQuote { align-self: flex-start; }
 }
 @media(max-width: 420px) { .workspace { display: none; } }
+
