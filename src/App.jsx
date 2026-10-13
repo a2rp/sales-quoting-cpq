@@ -1,21 +1,17 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { quoteSeed } from "./data/quotes";
+﻿import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { catalogSeed, quoteSeed } from "./data/quotes";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import Modal from "./components/modal";
 import Toast from "./components/toast";
 import ConfirmationDialog from "./components/confirmationDialog";
-import QuotesPage from "./pages/quotes";
-import QuoteBuilderPage from "./pages/quoteBuilder";
-import CatalogPage from "./pages/catalog";
-import ApprovalsPage from "./pages/approvals";
-import NotFoundPage from "./pages/notFound";
+import AppRoutes from "./AppRoutes";
 import styles from "./app.module.css";
 
 const App = () => {
   const [quotes, setQuotes] = useState(quoteSeed);
-  const [catalog, setCatalog] = useState([]);
+  const [catalog, setCatalog] = useState(catalogSeed);
   const [toast, setToast] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteQuote, setDeleteQuote] = useState(null);
@@ -48,35 +44,27 @@ const App = () => {
     notify(`${newQuote.number} created. Add products to configure pricing.`);
     navigate(`/quotes/${id}`);
   };
-  const updateQuote = (updated) => setQuotes((current) => current.map((quote) => quote.id === updated.id ? updated : quote));
-  const duplicateQuote = (quote) => {
+  const updateQuote = useCallback((updated) => setQuotes((current) => current.map((quote) => quote.id === updated.id ? updated : quote)), []);
+  const duplicateQuote = useCallback((quote) => {
     const id = `quote-${Date.now()}`;
-    const clone = { ...quote, id, number: `LF-${Math.max(1042, ...quotes.map((item) => Number(item.number.replace("LF-", ""))) + 1)}`, title: `${quote.title} copy`, status: "Draft", created: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }), items: quote.items.map((item) => ({ ...item, id: `${item.id}-copy-${Date.now()}` })) };
+    const nextNumber = Math.max(1042, ...quotes.map((item) => Number(item.number.replace("LF-", "")))) + 1;
+    const clone = { ...quote, id, number: `LF-${nextNumber}`, title: `${quote.title} copy`, status: "Draft", created: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }), items: quote.items.map((item) => ({ ...item, id: `${item.id}-copy-${Date.now()}` })) };
     setQuotes((current) => [clone, ...current]);
     notify(`${clone.number} duplicated as a draft.`);
     navigate(`/quotes/${id}`);
-  };
+  }, [navigate, notify, quotes]);
   const confirmDeleteQuote = () => {
     setQuotes((current) => current.filter((quote) => quote.id !== deleteQuote.id));
     setDeleteQuote(null);
     notify(`${deleteQuote.number} was removed.`);
     if (location.pathname === `/quotes/${deleteQuote.id}`) navigate("/quotes");
   };
-  const routeProps = useMemo(() => ({ quotes, catalog, setCatalog, updateQuote, duplicateQuote, onDeleteQuote: setDeleteQuote, notify }), [quotes, catalog, notify]);
+  const routeProps = { quotes, catalog, setCatalog, updateQuote, duplicateQuote, onDeleteQuote: setDeleteQuote, notify };
 
   return (
     <div className={styles.app}>
       <Header onNewQuote={() => setCreateOpen(true)} />
-      <main className={styles.main}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/quotes" replace />} />
-          <Route path="/quotes" element={<QuotesPage {...routeProps} onNewQuote={() => setCreateOpen(true)} />} />
-          <Route path="/quotes/:quoteId" element={<QuoteBuilderPage {...routeProps} />} />
-          <Route path="/catalog" element={<CatalogPage {...routeProps} />} />
-          <Route path="/approvals" element={<ApprovalsPage {...routeProps} />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </main>
+      <main className={styles.main}><AppRoutes {...routeProps} onNewQuote={() => setCreateOpen(true)} /></main>
       <Footer />
       <Toast toast={toast} onClose={() => setToast(null)} />
       <Modal isOpen={createOpen} title="Start a new quote" description="Set the customer and purpose. You can add products in the quote builder." onClose={() => { setCreateOpen(false); setFormError(""); }} size="medium">
