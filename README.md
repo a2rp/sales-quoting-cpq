@@ -21,10 +21,14 @@ A frontend-only CPQ demo for configuring customer proposals, reviewing price and
 | Action | Preview |
 | --- | --- |
 | Create quote | ![Create quote dialog](./screenshots/new-quote-dialog.png) |
+| Delete quote | ![Quote deletion confirmation](./screenshots/quote-delete-dialog.png) |
 | Proposal preview | ![Proposal preview dialog](./screenshots/proposal-preview-dialog.png) |
+| Remove quote line | ![Line item removal confirmation](./screenshots/line-item-delete-dialog.png) |
 | Add product | ![Add catalog product dialog](./screenshots/catalog-product-dialog.png) |
-| Confirm product removal | ![Product removal confirmation](./screenshots/catalog-delete-dialog.png) |
+| Edit product | ![Edit catalog product dialog](./screenshots/catalog-edit-dialog.png) |
+| Remove product | ![Product removal confirmation](./screenshots/catalog-delete-dialog.png) |
 | Approve quote | ![Approval decision dialog](./screenshots/approval-dialog.png) |
+| Request changes | ![Return for changes dialog](./screenshots/request-changes-dialog.png) |
 
 ## Included workflows
 
