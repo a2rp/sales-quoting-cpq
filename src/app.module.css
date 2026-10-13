@@ -1,0 +1,13 @@
+﻿.app { min-height: 100vh; display: flex; flex-direction: column; }
+.main { width: min(1320px, calc(100% - 64px)); margin: 0 auto; padding: 48px 0 80px; flex: 1; }
+.createForm { display: grid; gap: 18px; }
+.createForm label { display: grid; gap: 8px; color: var(--color-ink); font-size: 14px; font-weight: 650; }
+.createForm input { width: 100%; min-height: 46px; padding: 0 13px; border: 1px solid var(--color-line); border-radius: 9px; background: #fff; font-weight: 450; }
+.createForm input:focus { outline: 2px solid rgb(198 108 70 / 35%); border-color: var(--color-copper); }
+.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.formError { color: var(--color-error); font-size: 14px; }
+.formActions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 6px; }
+.primaryButton,.secondaryButton { min-height: 44px; padding: 0 18px; border: 1px solid transparent; border-radius: 9px; font-size: 14px; font-weight: 700; }
+.primaryButton { color: white; background: var(--color-copper-dark); }
+.secondaryButton { color: var(--color-ink); background: white; border-color: var(--color-line); }
+@media (max-width: 640px) { .main { width: min(100% - 32px, 1320px); padding: 32px 0 56px; } .formRow { grid-template-columns: 1fr; } }
