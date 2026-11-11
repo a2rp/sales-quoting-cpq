@@ -6,6 +6,12 @@ import ConfirmationDialog from "../../components/confirmationDialog";
 import Modal from "../../components/modal";
 import styles from "./styles.module.css";
 
+const makeCsvValue = (value) => {
+  const text = String(value ?? "");
+  const safeText = typeof value === "string" && ["=", "+", "-", "@"].includes(text.trimStart()[0]) ? `'${text}` : text;
+  return `"${safeText.replaceAll('"', '""')}"`;
+};
+
 const QuoteBuilderPage = ({ quotes, catalog, updateQuote, notify }) => {
   const { quoteId } = useParams();
   const quoteFromList = quotes.find((item) => item.id === quoteId);
@@ -20,7 +26,7 @@ const QuoteBuilderPage = ({ quotes, catalog, updateQuote, notify }) => {
 
   const updateField = (key, value) => { setDraft((current) => ({ ...current, [key]: value })); setSaved(false); };
   const updateLine = (itemId, key, value) => {
-    setDraft((current) => ({ ...current, items: current.items.map((item) => item.id === itemId ? { ...item, [key]: key === "quantity" ? Math.max(1, Number(value) || 1) : key === "discount" ? Math.min(item.maxDiscount, Math.max(0, Number(value) || 0)) : value } : item) }));
+    setDraft((current) => ({ ...current, items: current.items.map((item) => item.id === itemId ? { ...item, [key]: key === "quantity" ? Math.min(9999, Math.max(1, Number(value) || 1)) : key === "discount" ? Math.min(item.maxDiscount, Math.max(0, Number(value) || 0)) : value } : item) }));
     setSaved(false);
   };
   const addProduct = (event) => {
@@ -47,10 +53,11 @@ const QuoteBuilderPage = ({ quotes, catalog, updateQuote, notify }) => {
   const downloadQuote = () => {
     const csvRows = [["Quote", draft.number], ["Customer", draft.company], ["Contact", draft.contact], ["Product", "Quantity", "Unit price", "Discount", "Line total"]];
     draft.items.forEach((item) => csvRows.push([item.name, item.quantity, item.unitPrice, `${item.discount}%`, item.quantity * item.unitPrice * (1 - item.discount / 100)]));
+    csvRows.push(["Quote-level discount", "", "", `${draft.discount}%`, -totals.quoteDiscount]);
     csvRows.push(["Subtotal", "", "", "", totals.subtotal], ["Estimated tax", "", "", "", totals.tax], ["Total", "", "", "", totals.total]);
-    const csv = csvRows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
+    const csv = csvRows.map((row) => row.map(makeCsvValue).join(",")).join("\r\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-    const link = document.createElement("a"); link.href = url; link.download = `${draft.number.toLowerCase()}-quote.csv`; link.click(); URL.revokeObjectURL(url);
+    const link = document.createElement("a"); link.href = url; link.download = `${draft.number.toLowerCase()}-quote.csv`; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 0);
     notify("Quote summary downloaded as CSV.");
   };
 

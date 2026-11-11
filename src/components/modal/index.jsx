@@ -5,6 +5,9 @@ import styles from "./styles.module.css";
 const Modal = ({ isOpen, title, description, onClose, children, initialFocusRef, size = "medium" }) => {
   const dialogRef = useRef(null);
   const id = useId();
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -14,7 +17,7 @@ const Modal = ({ isOpen, title, description, onClose, children, initialFocusRef,
     const firstControl = initialFocusRef?.current || dialogRef.current?.querySelector("button, input, select, textarea, a[href]");
     firstControl?.focus();
     const handleKey = (event) => {
-      if (event.key === "Escape") { event.preventDefault(); onClose(); }
+      if (event.key === "Escape") { event.preventDefault(); onCloseRef.current(); }
       if (event.key === "Tab") {
         const controls = [...dialogRef.current.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href]")];
         if (!controls.length) return;
@@ -28,7 +31,7 @@ const Modal = ({ isOpen, title, description, onClose, children, initialFocusRef,
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus?.();
     };
-  }, [initialFocusRef, isOpen, onClose]);
+  }, [initialFocusRef, isOpen]);
 
   if (!isOpen) return null;
   return (

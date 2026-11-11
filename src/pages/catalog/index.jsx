@@ -25,8 +25,10 @@ const CatalogPage = ({ catalog, setCatalog, notify }) => {
     const price = Number(productDraft.unitPrice);
     const cost = Number(productDraft.unitCost);
     const maxDiscount = Number(productDraft.maxDiscount);
-    if (!productDraft.name.trim() || !productDraft.sku.trim() || !Number.isFinite(price) || price <= 0 || !Number.isFinite(cost) || cost < 0 || maxDiscount < 0 || maxDiscount > 50) { setError("Enter a name, SKU, positive price, valid cost, and a discount cap from 0% to 50%."); return; }
-    const next = { ...productDraft, name: productDraft.name.trim(), sku: productDraft.sku.trim().toUpperCase(), unitPrice: price, unitCost: cost, maxDiscount };
+    if (!productDraft.name.trim() || !productDraft.sku.trim() || !Number.isFinite(price) || price <= 0 || price > 1_000_000 || !Number.isFinite(cost) || cost < 0 || cost > 1_000_000 || !Number.isFinite(maxDiscount) || maxDiscount < 0 || maxDiscount > 50) { setError("Enter a name, a price up to $1,000,000, a valid cost, and a discount cap from 0% to 50%."); return; }
+    const sku = productDraft.sku.trim().toUpperCase();
+    if (catalog.some((product) => product.sku.toUpperCase() === sku && product.id !== editing?.id)) { setError("That SKU is already used by another catalog item."); return; }
+    const next = { ...productDraft, name: productDraft.name.trim(), sku, unitPrice: price, unitCost: cost, maxDiscount };
     if (editing) { setCatalog((current) => current.map((product) => product.id === editing.id ? { ...next, id: editing.id } : product)); notify(`${next.name} updated. Existing quote prices remain unchanged.`); }
     else { const id = `product-${Date.now()}`; setCatalog((current) => [{ ...next, id }, ...current]); notify(`${next.name} added to the catalog.`); }
     setEditorOpen(false);
